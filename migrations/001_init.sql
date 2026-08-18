@@ -1,6 +1,6 @@
 CREATE TABLE IF NOT EXISTS events (
     id          BIGSERIAL PRIMARY KEY,
-    event_id    TEXT NOT NULL,
+    event_id    TEXT NOT NULL UNIQUE,
     call_id     TEXT NOT NULL,
     account_id  TEXT NOT NULL,
     payload     JSONB NOT NULL,
