@@ -25,9 +25,8 @@ func TestInsertEventThenExists(t *testing.T) {
 	if exists {
 		t.Fatal("expected event to be absent before insert")
 	}
-
-	if err := s.InsertEvent(ctx, evt); err != nil {
-		t.Fatalf("InsertEvent: %v", err)
+	if inserted, err := s.InsertEvent(ctx, evt); err != nil || !inserted {
+		t.Fatalf("InsertEvent: %v (inserted=%v)", err, inserted)
 	}
 
 	exists, err = s.EventExists(ctx, eventID)

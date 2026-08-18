@@ -5,6 +5,7 @@ import (
 	"context"
 	"encoding/json"
 	"log/slog"
+	"sync"
 	"time"
 
 	"github.com/redis/go-redis/v9"
@@ -22,6 +23,23 @@ type Service struct {
 	cache *stats.Cache
 	rdb   *redis.Client
 	log   *slog.Logger
+	wg    sync.WaitGroup
+}
+
+// Close waits for all background goroutines to finish or until context expires.
+func (s *Service) Close(ctx context.Context) error {
+	done := make(chan struct{})
+	go func() {
+		s.wg.Wait()
+		close(done)
+	}()
+
+	select {
+	case <-done:
+		return nil
+	case <-ctx.Done():
+		return ctx.Err()
+	}
 }
 
 // New builds a Service.

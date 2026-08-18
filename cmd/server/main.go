@@ -57,7 +57,12 @@ func main() {
 	log.Info("shutting down")
 	shutdownCtx, cancel := context.WithTimeout(context.Background(), shutdownTimeout)
 	defer cancel()
+
 	if err := srv.Shutdown(shutdownCtx); err != nil {
-		log.Error("shutdown", "err", err)
+		log.Error("http shutdown error", "err", err)
+	}
+
+	if err := svc.Close(shutdownCtx); err != nil {
+		log.Error("ingest service shutdown error", "err", err)
 	}
 }
